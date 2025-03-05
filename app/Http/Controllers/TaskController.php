@@ -21,7 +21,7 @@ class TaskController extends Controller
             ->when($status === 'completed', function ($query) {
                 return $query->where('is_completed', true); // Выполненные задачи
             })
-            ->latest()
+            ->orderBy('updated_at', 'desc')
             ->paginate(10);
 
         return view('tasks.index', compact('tasks', 'status'));
