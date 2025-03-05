@@ -4,19 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class TaskController extends Controller
 {
     public function index()
     {
+        // Получаем статус из запроса (по умолчанию 'all')
+        $status = request('status', 'all');
+
+        // Фильтрация задач
         $tasks = auth()->user()->tasks()
-            ->when(request('status'), function ($query) {
-                return $query->where('is_completed', request('status'));
+            ->when($status === 'pending', function ($query) {
+                return $query->where('is_completed', false); // Не выполненные задачи
+            })
+            ->when($status === 'completed', function ($query) {
+                return $query->where('is_completed', true); // Выполненные задачи
             })
             ->latest()
             ->paginate(10);
 
-        return view('tasks.index', compact('tasks'));
+        return view('tasks.index', compact('tasks', 'status'));
     }
 
     public function create()
@@ -27,7 +35,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|max:255',
+            'title' => 'nullable|max:255',
             'description' => 'nullable|string',
         ]);
 
@@ -38,13 +46,13 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
-        $this->authorize('update', $task);
+        Gate::authorize('update', $task);
         return view('tasks.edit', compact('task'));
     }
 
     public function update(Request $request, Task $task)
     {
-        $this->authorize('update', $task);
+        Gate::authorize('update', $task);
 
         $request->validate([
             'title' => 'required|max:255',
@@ -58,15 +66,19 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
-        $this->authorize('delete', $task);
+        Gate::authorize('delete', $task);
         $task->delete();
         return redirect()->route('tasks.index');
     }
 
     public function toggle(Task $task)
     {
-        $this->authorize('update', $task);
+        // Проверка прав доступа
+        Gate::authorize('update', $task);
+
+        // Изменение статуса задачи
         $task->update(['is_completed' => !$task->is_completed]);
-        return back();
+
+        return back()->with('success', 'Task status updated successfully!');
     }
 }

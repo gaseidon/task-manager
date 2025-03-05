@@ -8,9 +8,10 @@ class Task extends Model
 {
     use SoftDeletes;
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'title',
+        'description',
+        'is_completed',
+        'user_id',
     ];
     public function user()
     {
