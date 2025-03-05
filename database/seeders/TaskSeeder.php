@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 
+
 class TaskSeeder extends Seeder
 {
     /**
@@ -27,7 +28,7 @@ class TaskSeeder extends Seeder
                 'title' => $faker->sentence(3), // Случайное предложение из 3 слов
                 'description' => $faker->paragraph, // Случайный абзац
                 'is_completed' => $faker->boolean, // Случайное булево значение
-                'user_id' => 2, // Случайное число от 1 до 10 для user_id
+                'user_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
