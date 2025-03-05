@@ -71,6 +71,7 @@ class TaskController extends Controller
         return redirect()->route('tasks.index');
     }
 
+
     public function toggle(Task $task)
     {
         // Проверка прав доступа
@@ -79,6 +80,10 @@ class TaskController extends Controller
         // Изменение статуса задачи
         $task->update(['is_completed' => !$task->is_completed]);
 
-        return back()->with('success', 'Task status updated successfully!');
+        // Возвращаем JSON-ответ
+        return response()->json([
+            'success' => true,
+            'is_completed' => $task->is_completed,
+        ]);
     }
 }
