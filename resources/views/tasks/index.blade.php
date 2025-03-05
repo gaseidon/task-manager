@@ -35,9 +35,9 @@
                                 <form action="{{ route('tasks.toggle', $task) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    <input 
-                                        type="checkbox" 
-                                        class="form-check-input me-2" 
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input me-2"
                                         {{ $task->is_completed ? 'checked' : '' }}
                                         onchange="this.form.submit()"
                                     >
