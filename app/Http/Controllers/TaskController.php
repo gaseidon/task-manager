@@ -46,8 +46,10 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
-        Gate::authorize('update', $task);
-        return view('tasks.edit', compact('task'));
+        $status = request('status', 'all');
+        $page = request('page', 1);
+
+        return view('tasks.edit', compact('task', 'status', 'page'));
     }
 
     public function update(Request $request, Task $task)
@@ -61,14 +63,20 @@ class TaskController extends Controller
 
         $task->update($request->all());
 
-        return redirect()->route('tasks.index');
+        return redirect()->route('tasks.index', [
+            'status' => $request->status,
+            'page' => $request->page,
+        ])->with('success', 'Task updated successfully!');
     }
 
     public function destroy(Task $task)
     {
         Gate::authorize('delete', $task);
         $task->delete();
-        return redirect()->route('tasks.index');
+        return redirect()->route('tasks.index', [
+            'status' => request('status'),
+            'page' => request('page'),
+        ])->with('success', 'Task deleted successfully!');
     }
 
 

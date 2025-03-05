@@ -3,9 +3,12 @@
 @section('content')
 <div class="container">
     <h1>Edit Task</h1>
-    <form action="{{ route('tasks.update', $task) }}" method="POST">
+    <form action="{{ route('tasks.update', ['task' => $task, 'status' => $status, 'page' => $page]) }}" method="POST">
         @csrf
         @method('PUT')
+        <input type="hidden" name="status" value="{{ $status }}">
+        <input type="hidden" name="page" value="{{ $page }}">
+
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input type="text" class="form-control" id="title" name="title" value="{{ $task->title }}" required>

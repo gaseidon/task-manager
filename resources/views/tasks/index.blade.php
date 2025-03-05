@@ -37,8 +37,11 @@
                 @endif
             </div>
             <div class="btn-group">
-                <a href="{{ route('tasks.edit', $task) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                <form action="{{ route('tasks.destroy', $task) }}" method="POST">
+                <!-- Ссылка на редактирование задачи -->
+                <a href="{{ route('tasks.edit', ['task' => $task, 'status' => request('status'), 'page' => request('page')]) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+
+                <!-- Форма удаления задачи -->
+                <form action="{{ route('tasks.destroy', ['task' => $task, 'status' => request('status'), 'page' => request('page')]) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
@@ -48,7 +51,7 @@
         @endforeach
     </div>
     <div class="mt-4">
-        {{ $tasks->appends(['status' => $status])->links() }}
+        {{ $tasks->appends(['status' => request('status')])->links() }}
     </div>
     @endif
 </div>
