@@ -9,23 +9,28 @@ use Illuminate\Support\Facades\Gate;
 class TaskController extends Controller
 {
     public function index()
-    {
-        // Получаем статус из запроса (по умолчанию 'all')
-        $status = request('status', 'all');
+{
+    // Получаем статус из запроса (по умолчанию 'all')
+    $status = request('status', 'all');
 
-        // Фильтрация задач
-        $tasks = auth()->user()->tasks()
-            ->when($status === 'pending', function ($query) {
-                return $query->where('is_completed', false); // Не выполненные задачи
-            })
-            ->when($status === 'completed', function ($query) {
-                return $query->where('is_completed', true); // Выполненные задачи
-            })
-            ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+    // Фильтрация задач
+    $tasks = auth()->user()->tasks()
+        ->when($status === 'pending', function ($query) {
+            return $query->where('is_completed', false); // Не выполненные задачи
+        })
+        ->when($status === 'completed', function ($query) {
+            return $query->where('is_completed', true); // Выполненные задачи
+        })
+        ->orderBy('id', 'asc')
+        ->paginate(10);
 
-        return view('tasks.index', compact('tasks', 'status'));
+    // Если текущая страница пуста и это не первая страница, перенаправляем на предыдущую
+    if ($tasks->isEmpty() && $tasks->currentPage() > 1) {
+        return redirect()->to($tasks->previousPageUrl());
     }
+
+    return view('tasks.index', compact('tasks', 'status'));
+}
 
     public function create()
     {
